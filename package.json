@@ -1,0 +1,24 @@
+{
+  "name": "backend_social_network",
+  "version": "1.0.0",
+  "description": "API For Social Network",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangitgts/api_social_network.git"
+  },
+  "keywords": [
+    "backend",
+    "social",
+    "network"
+  ],
+  "author": "bangitgts",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bangitgts/api_social_network/issues"
+  },
+  "homepage": "https://github.com/bangitgts/api_social_network#readme"
+}
