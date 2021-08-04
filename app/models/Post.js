@@ -12,8 +12,8 @@ const Post = new Schema({
         required: true
     },
     image: {
-        type: Array,
-        default: []
+        type: String,
+        default: ""
     },
     like: {
         type: Array,

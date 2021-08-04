@@ -2,6 +2,7 @@ const md5 = require('md5');
 const jwt = require("jsonwebtoken");
 const AccountModel = require('../models/Account');
 const PostModel = require('../models/Post');
+const uploadFile = require("../modules/uploadimage");
 class AccountController {
     // [POST] Register Account
     registerAccount(req, res) {
@@ -139,28 +140,38 @@ class AccountController {
             });
     };
     // [POST] POST Article
-    postArticle(req, res, next) {
-        const content = req.body.content;
-        PostModel.create({
-                userPost: req.user._id,
-                content: content
-            })
-            .then(data => {
-                res.status(200).json({
-                    status: 200,
-                    success: true,
-                    message: "Posted successfully",
-                });
-            })
-            .catch(err => {
-                res.status(500).json({
-                    status: 500,
+    postArticle(req, res, err) {
+        uploadFile(req, res, (error) => {
+            // Nếu có lỗi thì trả về lỗi cho client.
+            if (error) {
+                return res.status(402).json({
+                    status: 402,
                     success: false,
-                    message: "Server error",
+                    message: "File type must be png or jpeg",
                 });
-            })
-
-
+            }
+            const content = req.body.content;
+            const image = req.file.filename;
+            PostModel.create({
+                    userPost: req.user._id,
+                    content: content,
+                    image: image,
+                })
+                .then(data => {
+                    res.status(200).json({
+                        status: 200,
+                        success: true,
+                        message: "Posted successfully",
+                    });
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        status: 500,
+                        success: false,
+                        message: "Server error",
+                    });
+                })
+        })
     };
     // [PUT] PUT Article
     updateArticle(req, res, next) {
@@ -192,6 +203,10 @@ class AccountController {
     softDelete(req, res) {
         const idPost = req.body.id; // id post
 
-    }
+    };
+    // [Test
+    uploadImage(req, res) {
+        res.json(req.image);
+    };
 };
 module.exports = new AccountController();
