@@ -29,6 +29,7 @@
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.3.0",
     "mongoose": "^5.13.5",
+    "mongoose-delete": "^0.5.3",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.12"
   }

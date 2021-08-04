@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+var mongoose_delete = require('mongoose-delete');
 const Post = new Schema({
     userPost: {
         type: String,
@@ -28,5 +29,8 @@ const Post = new Schema({
     }
 }, {
     collection: "Post"
+});
+Post.plugin(mongoose_delete, {
+    deletedAt: true
 });
 module.exports = mongoose.model('Post', Post);

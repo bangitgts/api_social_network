@@ -162,31 +162,36 @@ class AccountController {
 
 
     };
+    // [PUT] PUT Article
     updateArticle(req, res, next) {
         const content = req.body.content; // content change
-        const idPost = req.body.id; // id post
+        const idPost = req.body._id; // id post
         PostModel.findOne({
                 _id: idPost,
-                userPost: req.user._id
+                userPost: req.user
             })
             .then(data => {
                 data.content = content;
+                data.updateDate = Date.now();
                 data.save();
                 res.status(200).json({
                     status: 200,
                     success: true,
                     message: "Update successfuly",
                 });
-
             })
             .catch(err => {
-                res.status(500).json({
-                    status: 500,
+                res.status(404).json({
+                    status: 404,
                     success: false,
-                    message: "Server error",
+                    message: "Data Not Found",
                 });
             })
-    }
+    };
+    // [DELETE] Delete Article
+    softDelete(req, res) {
+        const idPost = req.body.id; // id post
 
+    }
 };
 module.exports = new AccountController();

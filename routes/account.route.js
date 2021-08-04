@@ -13,5 +13,5 @@ router.get("/information", checkToken, accountController.informationAccount);
 router.post("/post", checkToken, accountController.postArticle);
 // [PUT] Put an article
 router.put("/updatepost", checkToken, accountController.updateArticle);
-
+// [DELETE] Delete an article
 module.exports = router;
