@@ -11,5 +11,7 @@ router.post("/login", accountController.loginAccount);
 router.get("/information", checkToken, accountController.informationAccount);
 // [POST] Post an article
 router.post("/post", checkToken, accountController.postArticle);
+// [PUT] Put an article
+router.put("/updatepost", checkToken, accountController.updateArticle);
 
 module.exports = router;

@@ -161,6 +161,31 @@ class AccountController {
             })
 
 
+    };
+    updateArticle(req, res, next) {
+        const content = req.body.content; // content change
+        const idPost = req.body.id; // id post
+        PostModel.findOne({
+                _id: idPost,
+                userPost: req.user._id
+            })
+            .then(data => {
+                data.content = content;
+                data.save();
+                res.status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "Update successfuly",
+                });
+
+            })
+            .catch(err => {
+                res.status(500).json({
+                    status: 500,
+                    success: false,
+                    message: "Server error",
+                });
+            })
     }
 
 };
