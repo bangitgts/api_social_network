@@ -8,14 +8,14 @@ module.exports = function(req, res, next) {
         message: "Please login to access"
     })
     try {
-        const checkToken = jwt.verify(token, 'password')
-        req.user = checkToken
-        next()
+        const checkToken = jwt.verify(token, 'password');
+        req.user = checkToken;
+        next();
     } catch (err) {
         res.status(400).send({
             status: 400,
             success: false,
             message: "Invalid token"
-        })
+        });
     }
 }

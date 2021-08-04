@@ -9,5 +9,7 @@ router.post("/register", accountController.registerAccount);
 router.post("/login", accountController.loginAccount);
 // [GET] Show Account
 router.get("/information", checkToken, accountController.informationAccount);
+// [POST] Post an article
+router.post("/post", checkToken, accountController.postArticle);
 
 module.exports = router;

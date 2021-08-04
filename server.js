@@ -24,7 +24,9 @@ app.use(morgan("combined"));
 // Router
 route(app);
 app.get("/", (req, res) => {
-    res.json(process.env.PORT);
+    res.json({
+        message: "API"
+    });
 });
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);

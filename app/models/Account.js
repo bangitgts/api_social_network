@@ -41,8 +41,7 @@ const Account = new Schema({
         type: Date,
         default: Date.now
     }
-
 }, {
-    collection: "Account",
+    collection: "Account"
 });
 module.exports = mongoose.model('Account', Account);

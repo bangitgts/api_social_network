@@ -1,6 +1,7 @@
 const md5 = require('md5');
 const jwt = require("jsonwebtoken");
-const AccountModel = require('../models/Account')
+const AccountModel = require('../models/Account');
+const PostModel = require('../models/Post');
 class AccountController {
     // [POST] Register Account
     registerAccount(req, res) {
@@ -68,6 +69,7 @@ class AccountController {
     loginAccount(req, res) {
         let userAccount = req.body.userAccount; // user or Email
         let password = md5(req.body.password);
+        console.log(userAccount, password);
         AccountModel.findOne({
                 $or: [{
                         email: userAccount,
@@ -135,6 +137,30 @@ class AccountController {
                     message: "Login failed",
                 });
             });
+    };
+    // [POST] POST Article
+    postArticle(req, res, next) {
+        const content = req.body.content;
+        PostModel.create({
+                userPost: req.user._id,
+                content: content
+            })
+            .then(data => {
+                res.status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "Posted successfully",
+                });
+            })
+            .catch(err => {
+                res.status(500).json({
+                    status: 500,
+                    success: false,
+                    message: "Server error",
+                });
+            })
+
+
     }
 
 };
