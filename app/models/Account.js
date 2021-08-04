@@ -1,25 +1,25 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+
 const Account = new Schema({
+    fullName: {
+        type: String,
+        minLength: 10,
+        required: [true, "fullName required"]
+
+    },
     user: {
         type: String,
         lowercase: true,
         minLength: 1,
         maxLength: 15,
+        unique: true,
         required: [true, "User required"]
     },
     email: {
         type: String,
-        trim: true,
-        lowercase: true,
         unique: true,
-        validate: {
-            validator: function(v) {
-                return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
-            },
-            message: "Please enter a valid email"
-        },
         required: [true, "Email required"]
     },
     password: {
@@ -27,17 +27,23 @@ const Account = new Schema({
         minLength: 6,
         required: [true, "Password required"]
     },
+    sex: {
+        type: String
+    },
     avatar: {
         type: String,
         default: "abc"
     },
     description: {
-        type: String
+        type: String,
+        default: ""
     },
     createDate: {
         type: Date,
         default: Date.now
     }
 
+}, {
+    collection: "Account",
 });
 module.exports = mongoose.model('Account', Account);
