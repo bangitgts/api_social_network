@@ -178,7 +178,6 @@ class AccountController {
     // [PUT] PUT Article
     updateArticle(req, res) {
         uploadFile(req, res, (error) => {
-
             if (error) {
                 return res.status(402).json({
                     status: 402,
@@ -186,20 +185,22 @@ class AccountController {
                     message: "File type must be png or jpeg",
                 });
             }
-            console.log(req.file.filename);
-            // if (req.file.filename !== null)
-            //     imageUpdate = req.file.filename;
-
+            let image;;
+            if (req.file !== undefined)
+                image = req.file.filename
             const content = req.body.content; // content change
-
             const idPost = req.body._id; // id post
             PostModel.findOne({
                     _id: idPost,
                     userPost: req.user
                 })
                 .then(data => {
-                    data.content = content;
-                    data.updateDate = Date.now();
+                    if (content !== undefined)
+                        data.content = content;
+                    if (image !== undefined)
+                        data.image = image;
+                    if (content !== undefined || image !== undefined)
+                        data.updateDate = Date.now();
                     data.save();
                     res.status(200).json({
                         status: 200,
