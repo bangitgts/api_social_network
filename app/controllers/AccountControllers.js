@@ -2,7 +2,7 @@ const md5 = require('md5');
 const jwt = require("jsonwebtoken");
 const AccountModel = require('../models/Account');
 const PostModel = require('../models/Post');
-const uploadFile = require("../modules/uploadimage");
+const uploadFile = require('../modules/uploadimage')
 class AccountController {
     // [POST] Register Account
     registerAccount(req, res) {
@@ -140,9 +140,8 @@ class AccountController {
             });
     };
     // [POST] POST Article
-    postArticle(req, res, err) {
+    postArticle(req, res, next) {
         uploadFile(req, res, (error) => {
-            // Nếu có lỗi thì trả về lỗi cho client.
             if (error) {
                 return res.status(402).json({
                     status: 402,
@@ -151,11 +150,13 @@ class AccountController {
                 });
             }
             const content = req.body.content;
-            const image = req.file.filename;
+            let image = '';
+            if (req.file !== undefined)
+                image = req.file.filename
             PostModel.create({
                     userPost: req.user._id,
                     content: content,
-                    image: image,
+                    image: image
                 })
                 .then(data => {
                     res.status(200).json({
@@ -172,32 +173,49 @@ class AccountController {
                     });
                 })
         })
+
     };
     // [PUT] PUT Article
-    updateArticle(req, res, next) {
-        const content = req.body.content; // content change
-        const idPost = req.body._id; // id post
-        PostModel.findOne({
-                _id: idPost,
-                userPost: req.user
-            })
-            .then(data => {
-                data.content = content;
-                data.updateDate = Date.now();
-                data.save();
-                res.status(200).json({
-                    status: 200,
-                    success: true,
-                    message: "Update successfuly",
-                });
-            })
-            .catch(err => {
-                res.status(404).json({
-                    status: 404,
+    updateArticle(req, res) {
+        uploadFile(req, res, (error) => {
+
+            if (error) {
+                return res.status(402).json({
+                    status: 402,
                     success: false,
-                    message: "Data Not Found",
+                    message: "File type must be png or jpeg",
                 });
-            })
+            }
+            console.log(req.file.filename);
+            // if (req.file.filename !== null)
+            //     imageUpdate = req.file.filename;
+
+            const content = req.body.content; // content change
+
+            const idPost = req.body._id; // id post
+            PostModel.findOne({
+                    _id: idPost,
+                    userPost: req.user
+                })
+                .then(data => {
+                    data.content = content;
+                    data.updateDate = Date.now();
+                    data.save();
+                    res.status(200).json({
+                        status: 200,
+                        success: true,
+                        message: "Update successfuly",
+                    });
+                })
+                .catch(err => {
+                    res.status(404).json({
+                        status: 404,
+                        success: false,
+                        message: "Data Not Found",
+                    });
+                })
+        })
+
     };
     // [DELETE] Delete Article
     softDelete(req, res) {

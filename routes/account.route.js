@@ -2,7 +2,7 @@ const accountController = require("../app/controllers/AccountControllers")
 const express = require("express");
 const router = express.Router();
 const checkToken = require("../app/auth/CheckToken");
-
+const uploadFile = require("../app/modules/uploadimage");
 // [POST] Register Account
 router.post("/register", accountController.registerAccount);
 // [POST] Login Account
