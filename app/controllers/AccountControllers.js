@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const AccountModel = require('../models/Account');
 const PostModel = require('../models/Post');
 const uploadFile = require('../modules/uploadimage')
+
+
 class AccountController {
     // [POST] Register Account
     registerAccount(req, res) {
@@ -173,7 +175,6 @@ class AccountController {
                     });
                 })
         })
-
     };
     // [PUT] PUT Article
     updateArticle(req, res) {
@@ -285,5 +286,74 @@ class AccountController {
                 })
             })
     };
+    // [PUT] Like Article
+    likeArticle(req, res) {
+        PostModel.findOne({
+                _id: req.params._id
+            })
+            .then(data => {
+                const flag = data.like.find(element => element === req.user._id);
+                if (flag === undefined) {
+                    data.like.push(req.user._id);
+                    data.save();
+                    res.status(200).json({
+                        status: 200,
+                        success: true,
+                        message: "Like Successfuly",
+                    })
+                } else {
+                    res.status(405).json({
+                        status: 405,
+                        success: false,
+                        message: "This account liked the post",
+                    })
+                }
+
+            })
+            .catch(err => {
+                res.status(500).json({
+                    status: 500,
+                    success: false,
+                    message: "Server Error",
+                })
+            })
+    }
+    unlikeArticle(req, res) {
+        function arrayRemove(arr, value) {
+            return arr.filter(function(ele) {
+                return ele != value;
+            });
+        };
+        PostModel.findOne({
+                _id: req.params._id
+            })
+            .then(data => {
+                const flag = data.like.find(element => element == req.user._id);
+                console.log(flag);
+                if (flag === undefined) {
+
+                    res.status(405).json({
+                        status: 405,
+                        success: false,
+                        message: "This account didn't like the post",
+                    })
+                } else {
+                    data.like = arrayRemove(data.like, req.user._id);
+                    data.save();
+                    res.status(200).json({
+                        status: 200,
+                        success: true,
+                        message: "Unlike Successfuly",
+                    })
+                }
+            })
+            .catch(err => {
+                res.status(500).json({
+                    status: 500,
+                    success: false,
+                    message: "Server Error",
+                })
+            })
+    }
 };
 module.exports = new AccountController();

@@ -2,7 +2,6 @@ const accountController = require("../app/controllers/AccountControllers")
 const express = require("express");
 const router = express.Router();
 const checkToken = require("../app/auth/CheckToken");
-const uploadFile = require("../app/modules/uploadimage");
 // [POST] Register Account
 router.post("/register", accountController.registerAccount);
 // [POST] Login Account
@@ -19,5 +18,9 @@ router.delete("/deletepost", checkToken, accountController.softDelete);
 router.put("/restorepost", checkToken, accountController.retoreArticle);
 // [DELETE] Destroy an article
 router.delete("/destroypost/:_id", checkToken, accountController.destroy);
+// [PUT] Like an article
+router.put("/likepost/:_id", checkToken, accountController.likeArticle); // _id bai viet
+// [PUT] Unlike an article
+router.put("/unlikepost/:_id", checkToken, accountController.unlikeArticle); // _id bai viet
 
 module.exports = router;
