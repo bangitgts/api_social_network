@@ -220,12 +220,70 @@ class AccountController {
     };
     // [DELETE] Delete Article
     softDelete(req, res) {
-        const idPost = req.body.id; // id post
+        let _id = req.params._id;
+        const _user = req.user._id; // user id
 
+        PostModel.delete({
+            _id: _id,
+            userPost: _user
+        }, function(err, result) {
+            if (err) {
+                res.status(404).json({
+                    status: 404,
+                    success: false,
+                    message: "Data Not Found",
+                })
+            } else
+                res.status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "Delete Successfuly",
+                })
+
+        });
     };
-    // [Test
-    uploadImage(req, res) {
-        res.json(req.image);
+    // [PUT] Restore Article
+    retoreArticle(req, res) {
+        let _id = req.params._id;
+        const _user = req.user._id; // user id
+        PostModel.restore({
+            _id: _id,
+            userPost: _user
+        }, function(err, result) {
+            if (err) {
+                res.status(404).json({
+                    status: 404,
+                    success: false,
+                    message: "Data Not Found",
+                })
+            } else
+                res.status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "Restore Successfuly",
+                })
+        });
+    };
+    // [DELETE] Destroy Article
+    destroy(req, res) {
+        PostModel.deleteOne({
+                _id: req.params._id,
+                userPost: req.user._id,
+                deleted: true
+            }).then(data => {
+                res.status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "Delte Successfuly",
+                })
+            })
+            .catch(err => {
+                res.status(404).json({
+                    status: 404,
+                    success: false,
+                    message: "Data Not Found",
+                })
+            })
     };
 };
 module.exports = new AccountController();

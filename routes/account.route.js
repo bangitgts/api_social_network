@@ -13,5 +13,11 @@ router.get("/information", checkToken, accountController.informationAccount);
 router.post("/post", checkToken, accountController.postArticle);
 // [PUT] Put an article
 router.put("/updatepost", checkToken, accountController.updateArticle);
-// [DELETE] Delete an article
+// [DELETE] Soft delete an article
+router.delete("/deletepost", checkToken, accountController.softDelete);
+// [PUT] restore an article
+router.put("/restorepost", checkToken, accountController.retoreArticle);
+// [DELETE] Destroy an article
+router.delete("/destroypost/:_id", checkToken, accountController.destroy);
+
 module.exports = router;
