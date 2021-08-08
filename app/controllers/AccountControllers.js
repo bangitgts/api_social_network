@@ -72,7 +72,6 @@ class AccountController {
     loginAccount(req, res) {
         let userAccount = req.body.userAccount; // user or Email
         let password = md5(req.body.password);
-        console.log(userAccount, password);
         AccountModel.findOne({
                 $or: [{
                         email: userAccount,
@@ -87,12 +86,14 @@ class AccountController {
             .then(data => {
                 if (data) {
                     let token = jwt.sign({
+                            exp: Math.floor(Date.now() / 1000) + (60 * 60),
                             _id: data._id,
+
                         },
                         "password"
                     );
                     res.header("auth-token", token);
-                    res.status(200).json({
+                    return res.status(200).json({
                         message: "Loggin successfully",
                         data: {
                             user: data.user,
@@ -118,7 +119,7 @@ class AccountController {
                 _id: req.user,
             })
             .then((data) => {
-                res.status(200).json({
+                return res.status(200).json({
                     status: 200,
                     success: true,
                     data: {
@@ -134,15 +135,33 @@ class AccountController {
                 });
             })
             .catch((err) => {
-                res.status(400).json({
+                return res.status(400).json({
                     status: 400,
                     success: false,
                     message: "Login failed",
                 });
             });
     };
-    // [POST] POST Article
-    postArticle(req, res, next) {
+    makeFriend(req, res) {
+            const _id = req.params.id; // id user ket ban
+            AccountModel.find({
+                    _id: req.user._id
+                })
+                .then(data => {
+                    const flag = data.friend.find(el => el === req.params._id);
+                    if (flag === undefined) {
+
+                    } else {
+                        return res.status(405).json({
+                            status: 405,
+                            success: false,
+                            message: "Two accounts have been friends with each other",
+                        })
+                    }
+                })
+        }
+        // [POST] POST Article
+    postArticle(req, res) {
         uploadFile(req, res, (error) => {
             if (error) {
                 return res.status(402).json({
@@ -154,21 +173,21 @@ class AccountController {
             const content = req.body.content;
             let image = '';
             if (req.file !== undefined)
-                image = req.file.filename
+                image = req.file.filename;
             PostModel.create({
                     userPost: req.user._id,
                     content: content,
                     image: image
                 })
                 .then(data => {
-                    res.status(200).json({
+                    return res.status(200).json({
                         status: 200,
                         success: true,
                         message: "Posted successfully",
                     });
                 })
                 .catch(err => {
-                    res.status(500).json({
+                    return res.status(500).json({
                         status: 500,
                         success: false,
                         message: "Server error",
@@ -203,14 +222,14 @@ class AccountController {
                     if (content !== undefined || image !== undefined)
                         data.updateDate = Date.now();
                     data.save();
-                    res.status(200).json({
+                    return res.status(200).json({
                         status: 200,
                         success: true,
                         message: "Update successfuly",
                     });
                 })
                 .catch(err => {
-                    res.status(404).json({
+                    return res.status(404).json({
                         status: 404,
                         success: false,
                         message: "Data Not Found",
@@ -229,13 +248,13 @@ class AccountController {
             userPost: _user
         }, function(err, result) {
             if (err) {
-                res.status(404).json({
+                return res.status(404).json({
                     status: 404,
                     success: false,
                     message: "Data Not Found",
                 })
             } else
-                res.status(200).json({
+                return res.status(200).json({
                     status: 200,
                     success: true,
                     message: "Delete Successfuly",
@@ -244,7 +263,7 @@ class AccountController {
         });
     };
     // [PUT] Restore Article
-    retoreArticle(req, res) {
+    restoreArticle(req, res) {
         let _id = req.params._id;
         const _user = req.user._id; // user id
         PostModel.restore({
@@ -252,13 +271,13 @@ class AccountController {
             userPost: _user
         }, function(err, result) {
             if (err) {
-                res.status(404).json({
+                return res.status(404).json({
                     status: 404,
                     success: false,
                     message: "Data Not Found",
                 })
             } else
-                res.status(200).json({
+                return res.status(200).json({
                     status: 200,
                     success: true,
                     message: "Restore Successfuly",
@@ -272,14 +291,14 @@ class AccountController {
                 userPost: req.user._id,
                 deleted: true
             }).then(data => {
-                res.status(200).json({
+                return res.status(200).json({
                     status: 200,
                     success: true,
                     message: "Delte Successfuly",
                 })
             })
             .catch(err => {
-                res.status(404).json({
+                return res.status(404).json({
                     status: 404,
                     success: false,
                     message: "Data Not Found",
@@ -296,13 +315,13 @@ class AccountController {
                 if (flag === undefined) {
                     data.like.push(req.user._id);
                     data.save();
-                    res.status(200).json({
+                    return res.status(200).json({
                         status: 200,
                         success: true,
                         message: "Like Successfuly",
                     })
                 } else {
-                    res.status(405).json({
+                    return res.status(405).json({
                         status: 405,
                         success: false,
                         message: "This account liked the post",
@@ -311,7 +330,7 @@ class AccountController {
 
             })
             .catch(err => {
-                res.status(500).json({
+                return res.status(500).json({
                     status: 500,
                     success: false,
                     message: "Server Error",
@@ -329,10 +348,8 @@ class AccountController {
             })
             .then(data => {
                 const flag = data.like.find(element => element == req.user._id);
-                console.log(flag);
                 if (flag === undefined) {
-
-                    res.status(405).json({
+                    return res.status(405).json({
                         status: 405,
                         success: false,
                         message: "This account didn't like the post",
@@ -340,7 +357,7 @@ class AccountController {
                 } else {
                     data.like = arrayRemove(data.like, req.user._id);
                     data.save();
-                    res.status(200).json({
+                    return res.status(200).json({
                         status: 200,
                         success: true,
                         message: "Unlike Successfuly",

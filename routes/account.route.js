@@ -15,7 +15,7 @@ router.put("/updatepost", checkToken, accountController.updateArticle);
 // [DELETE] Soft delete an article
 router.delete("/deletepost", checkToken, accountController.softDelete);
 // [PUT] restore an article
-router.put("/restorepost", checkToken, accountController.retoreArticle);
+router.put("/restorepost", checkToken, accountController.restoreArticle);
 // [DELETE] Destroy an article
 router.delete("/destroypost/:_id", checkToken, accountController.destroy);
 // [PUT] Like an article

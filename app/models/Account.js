@@ -26,6 +26,14 @@ const Account = new Schema({
         minLength: 6,
         required: [true, "Password required"]
     },
+    friend: {
+        type: Array,
+        default: []
+    },
+    follower: {
+        type: Array,
+        default: []
+    },
     sex: {
         type: String
     },

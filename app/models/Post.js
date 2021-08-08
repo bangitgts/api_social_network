@@ -25,7 +25,7 @@ const Post = new Schema({
     },
     updateDate: {
         type: Date,
-        default: Date.now
+        default: null
     }
 }, {
     collection: "Post"
