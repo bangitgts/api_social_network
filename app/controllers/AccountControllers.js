@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const AccountModel = require('../models/Account');
 const PostModel = require('../models/Post');
 const uploadFile = require('../modules/uploadimage');
-const formatDate = require("../controllers/FormatDate")
+const formatDate = require("../controllers/FormatDate");
 class AccountController {
     // [POST] Register Account
     registerAccount(req, res) {
@@ -12,60 +12,67 @@ class AccountController {
         let email = req.body.email;
         let password = req.body.password;
         let sex = req.body.sex;
-
-        AccountModel.findOne({
-                email: email
-            })
-            .then(data => {
-                if (data) {
-                    return res.status(400).json({
-                        message: "Account created failed. This email already exists",
-                        status: 400,
-                        success: false
-                    });
-                } else {
-                    AccountModel.findOne({
-                            user: user
-                        })
-                        .then(data => {
-                            if (data) {
-                                return res.status(400).json({
-                                    message: "Account created failed. This user already exists",
-                                    status: 400,
-                                    success: false
-                                });
-                            } else {
-                                if (password.length <= 6) {
-                                    return res.status(406).json({
-                                        message: "Password is too short. Need to put more than 6 characters",
-                                        status: 406,
+        if (sex === "Male" || sex === "Female") {
+            AccountModel.findOne({
+                    email: email
+                })
+                .then(data => {
+                    if (data) {
+                        return res.status(400).json({
+                            message: "Account created failed. This email already exists",
+                            status: 400,
+                            success: false
+                        });
+                    } else {
+                        AccountModel.findOne({
+                                user: user
+                            })
+                            .then(data => {
+                                if (data) {
+                                    return res.status(400).json({
+                                        message: "Account created failed. This user already exists",
+                                        status: 400,
                                         success: false
                                     });
                                 } else {
-                                    AccountModel.create({
-                                        fullName: fullName,
-                                        user: user,
-                                        email: email,
-                                        password: md5(password),
-                                        sex: sex
-                                    })
-                                    return res.status(200).json({
-                                        message: "Account created successfully",
-                                        status: 200,
-                                        success: true
-                                    });
+                                    if (password.length <= 6) {
+                                        return res.status(406).json({
+                                            message: "Password is too short. Need to put more than 6 characters",
+                                            status: 406,
+                                            success: false
+                                        });
+                                    } else {
+                                        AccountModel.create({
+                                            fullName: fullName,
+                                            user: user,
+                                            email: email,
+                                            password: md5(password),
+                                            sex: sex
+                                        })
+                                        return res.status(200).json({
+                                            message: "Account created successfully",
+                                            status: 200,
+                                            success: true
+                                        });
+                                    }
                                 }
-                            }
-                        })
-                }
-            })
-            .catch(err => {
-                res.status(500).json({
-                    message: "Server Error",
-                    status: 500,
-                    success: false,
+                            })
+                    }
                 })
+                .catch(err => {
+                    res.status(500).json({
+                        message: "Server Error",
+                        status: 500,
+                        success: false,
+                    })
+                })
+        } else {
+            res.status(404).json({
+                status: 404,
+                success: false,
+                message: "Input data is incorrect",
             })
+        }
     };
     // [POST] Login Account
     loginAccount(req, res) {
@@ -158,7 +165,7 @@ class AccountController {
                     success: false,
                     message: "Couldn't find an account to add",
                 });
-                return;
+
             }
             if (boolFlag === undefined) {
                 const tempAdd = {

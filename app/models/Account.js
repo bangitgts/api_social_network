@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const formatDate = require("../controllers/FormatDate")
-
 const Account = new Schema({
     fullName: {
         type: String,
@@ -40,7 +39,8 @@ const Account = new Schema({
         default: []
     },
     sex: {
-        type: String
+        type: String,
+        require: true
     },
     avatar: {
         type: String,
