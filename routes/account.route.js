@@ -25,5 +25,7 @@ router.put("/likepost/:_id", checkToken, accountController.likeArticle); // _id 
 router.put("/unlikepost/:_id", checkToken, accountController.unlikeArticle); // _id bai viet
 // [PUT] Add friend
 router.put("/addfriend/:_id", checkToken, accountController.makeFriend);
+// [PUT] Follow friend
+router.put("/followfriend/:_id", checkToken, accountController.followFriend);
 
 module.exports = router;

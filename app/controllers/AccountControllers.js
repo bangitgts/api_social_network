@@ -213,7 +213,6 @@ class AccountController {
             }
 
         } catch (err) {
-            console.log(err);
             return res.status(500).json({
                 status: 500,
                 success: false,
@@ -222,6 +221,48 @@ class AccountController {
         }
     };
     async followFriend(req, res) {
+        try {
+            const userLogin = await AccountModel.findOne({
+                _id: req.user._id
+            }); // Userlogin
+            const userFollow = await AccountModel.findOne({
+                _id: req.params._id
+            });
+            const followFlag = userLogin.find(el => el._id === userFollow);
+            if (followFlag === undefined) {
+                const tempFollowed = {
+                    _id: idUser,
+                    user: userAdd.user,
+                    followDate: formatDate(Date.now())
+                };
+                const tempFollower = {
+                    _id: req.user._id,
+                    user: userFollow.user,
+                    followDate: formatDate(Date.now())
+                };
+                userLogin.followed.push(tempFollowed);
+                userFollow.follower.push(tempFollower);
+                userLogin.save();
+                userFollow.save();
+                return res.status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "Followed successfully",
+                });
+            } else {
+                return res.status(403).json({
+                    status: 403,
+                    success: false,
+                    message: "Followed before",
+                });
+            }
+        } catch (err) {
+            return res.status(500).json({
+                status: 500,
+                success: false,
+                message: "Server Error",
+            });
+        }
 
     };
     // [POST] POST Article
