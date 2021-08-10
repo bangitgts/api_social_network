@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+function formatDate() {
+    let today = new Date(Date.now());
+    return {
+        date: `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`,
+        hours: `${today.getHours()}:${today.getMinutes()}`
+    }
+};
+const timeNow = formatDate();
 const Account = new Schema({
     fullName: {
         type: String,
@@ -46,8 +54,8 @@ const Account = new Schema({
         default: ""
     },
     createDate: {
-        type: Date,
-        default: Date.now
+        type: Object,
+        default: timeNow
     }
 }, {
     collection: "Account"

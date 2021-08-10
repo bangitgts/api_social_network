@@ -2,10 +2,15 @@ const md5 = require('md5');
 const jwt = require("jsonwebtoken");
 const AccountModel = require('../models/Account');
 const PostModel = require('../models/Post');
-const uploadFile = require('../modules/uploadimage')
-
-
+const uploadFile = require('../modules/uploadimage');
 class AccountController {
+    // FormatDate
+    formatDate(today, date, hours) {
+        return {
+            date: `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`,
+            hours: `${today.getHours()}:${today.getMinutes()}`
+        }
+    };
     // [POST] Register Account
     registerAccount(req, res) {
         let fullName = req.body.fullName;
@@ -142,25 +147,40 @@ class AccountController {
                 });
             });
     };
-    makeFriend(req, res) {
-            const _id = req.params.id; // id user ket ban
-            AccountModel.find({
-                    _id: req.user._id
-                })
-                .then(data => {
-                    const flag = data.friend.find(el => el === req.params._id);
-                    if (flag === undefined) {
+    async makeFriend(req, res) {
+        try {
+            const idUser = req.params._id; // _id User them 
+            const userLogin = await AccountModel.findOne({
+                _id: req.user._id
+            }); // User logined
 
-                    } else {
-                        return res.status(405).json({
-                            status: 405,
-                            success: false,
-                            message: "Two accounts have been friends with each other",
-                        })
-                    }
+            const boolFlag = userLogin.find(el => el._id === idUser);
+            if (boolFlag === undefined) {
+                const userAdd = await AccountModel.findOne({
+                    _id: idUser
                 })
+                const tempAdd = {
+                    _id: idUser,
+                    user: userAdd.user,
+                }
+            } else {
+                return res.status(403).json({
+                    status: 403,
+                    success: false,
+                    message: "Two people have made friends",
+                });
+            }
+
+
+        } catch (err) {
+            return res.status(500).json({
+                status: 500,
+                success: false,
+                message: "Server Error",
+            });
         }
-        // [POST] POST Article
+    };
+    // [POST] POST Article
     postArticle(req, res) {
         uploadFile(req, res, (error) => {
             if (error) {

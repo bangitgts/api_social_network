@@ -22,5 +22,7 @@ router.delete("/destroypost/:_id", checkToken, accountController.destroy);
 router.put("/likepost/:_id", checkToken, accountController.likeArticle); // _id bai viet
 // [PUT] Unlike an article
 router.put("/unlikepost/:_id", checkToken, accountController.unlikeArticle); // _id bai viet
+// [PUT] Add friend
+router.put("/addfriend/:_id", checkToken, accountController.makeFriend);
 
 module.exports = router;
