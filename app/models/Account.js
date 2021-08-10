@@ -1,14 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const formatDate = require("../controllers/FormatDate")
 
-function formatDate() {
-    let today = new Date(Date.now());
-    return {
-        date: `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`,
-        hours: `${today.getHours()}:${today.getMinutes()}`
-    }
-};
-const timeNow = formatDate();
 const Account = new Schema({
     fullName: {
         type: String,
@@ -38,6 +31,10 @@ const Account = new Schema({
         type: Array,
         default: []
     },
+    friendWait: {
+        type: Array,
+        default: []
+    },
     follower: {
         type: Array,
         default: []
@@ -55,7 +52,7 @@ const Account = new Schema({
     },
     createDate: {
         type: Object,
-        default: timeNow
+        default: formatDate(Date.now())
     }
 }, {
     collection: "Account"

@@ -1,7 +1,8 @@
 const accountController = require("../app/controllers/AccountControllers")
 const express = require("express");
-const router = express.Router();
 const checkToken = require("../app/auth/CheckToken");
+
+const router = express.Router();
 // [POST] Register Account
 router.post("/register", accountController.registerAccount);
 // [POST] Login Account

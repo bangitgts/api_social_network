@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-var mongoose_delete = require('mongoose-delete');
+const mongoose_delete = require('mongoose-delete');
+const formatDate = require("../controllers/FormatDate")
+
 const Post = new Schema({
     userPost: {
         type: String,
@@ -20,11 +22,11 @@ const Post = new Schema({
         default: []
     }, // User liked post 
     createDate: {
-        type: Date,
-        default: Date.now
+        type: Object,
+        default: formatDate(Date.now)
     },
     updateDate: {
-        type: Date,
+        type: Object,
         default: null
     }
 }, {

@@ -8,7 +8,7 @@ async function connect() {
             useFindAndModify: false,
             useCreateIndex: true
         });
-        console.log("Connect successfully!!!")
+        console.log("Connect MongDb successfully!!!")
     } catch (error) {
         console.log("Connect failure!!!")
     }

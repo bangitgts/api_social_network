@@ -3,14 +3,8 @@ const jwt = require("jsonwebtoken");
 const AccountModel = require('../models/Account');
 const PostModel = require('../models/Post');
 const uploadFile = require('../modules/uploadimage');
+const formatDate = require("../controllers/FormatDate")
 class AccountController {
-    // FormatDate
-    formatDate(today, date, hours) {
-        return {
-            date: `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`,
-            hours: `${today.getHours()}:${today.getMinutes()}`
-        }
-    };
     // [POST] Register Account
     registerAccount(req, res) {
         let fullName = req.body.fullName;
@@ -147,22 +141,49 @@ class AccountController {
                 });
             });
     };
+    // [PUT] Add Friend
     async makeFriend(req, res) {
         try {
             const idUser = req.params._id; // _id User them 
             const userLogin = await AccountModel.findOne({
                 _id: req.user._id
             }); // User logined
-
-            const boolFlag = userLogin.find(el => el._id === idUser);
+            const userAdd = await AccountModel.findOne({
+                _id: idUser
+            });
+            const boolFlag = userLogin.friend.find(el => el._id === idUser);
+            if (userAdd === undefined) {
+                return res.status(404).json({
+                    status: 404,
+                    success: false,
+                    message: "Couldn't find an account to add",
+                });
+                return;
+            }
             if (boolFlag === undefined) {
-                const userAdd = await AccountModel.findOne({
-                    _id: idUser
-                })
                 const tempAdd = {
                     _id: idUser,
                     user: userAdd.user,
+                    addDate: formatDate(Date.now()),
+                    flag: false //False === Dang cho ket ban, true === ket ban thanh cong
+                };
+                const userFollow = boolFlag.follower.find(el => el._id === idUser);
+                if (userFollow === undefined) {
+                    const tempFollow = {
+                        _id: idUser,
+                        user: userAdd.user,
+                        followDate: formatDate(Date.now())
+                    };
+                    userLogin.follower.push(tempFollow);
                 }
+                userLogin.friendWait.push(tempAdd);
+                userLogin.save();
+                return res.status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "Sent friend request",
+                });
+
             } else {
                 return res.status(403).json({
                     status: 403,
@@ -170,8 +191,6 @@ class AccountController {
                     message: "Two people have made friends",
                 });
             }
-
-
         } catch (err) {
             return res.status(500).json({
                 status: 500,
@@ -179,6 +198,9 @@ class AccountController {
                 message: "Server Error",
             });
         }
+    };
+    async followFriend(req, res) {
+
     };
     // [POST] POST Article
     postArticle(req, res) {
@@ -240,7 +262,7 @@ class AccountController {
                     if (image !== undefined)
                         data.image = image;
                     if (content !== undefined || image !== undefined)
-                        data.updateDate = Date.now();
+                        data.updateDate = formatDate(Date.now());
                     data.save();
                     return res.status(200).json({
                         status: 200,
@@ -260,7 +282,7 @@ class AccountController {
     };
     // [DELETE] Delete Article
     softDelete(req, res) {
-        let _id = req.params._id;
+        let _id = req.params._id; // _id post delete
         const _user = req.user._id; // user id
 
         PostModel.delete({
