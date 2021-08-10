@@ -37,7 +37,11 @@ const Account = new Schema({
     follower: {
         type: Array,
         default: []
-    },
+    }, // Nguoi da theo doi
+    followed: {
+        type: Array,
+        default: []
+    }, // Da theo doi nguoi nao
     sex: {
         type: String,
         require: true

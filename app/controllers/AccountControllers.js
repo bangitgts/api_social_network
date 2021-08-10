@@ -158,47 +158,62 @@ class AccountController {
             const userAdd = await AccountModel.findOne({
                 _id: idUser
             });
-            const boolFlag = userLogin.friend.find(el => el._id === idUser);
             if (userAdd === undefined) {
                 return res.status(404).json({
                     status: 404,
                     success: false,
                     message: "Couldn't find an account to add",
                 });
-
-            }
-            if (boolFlag === undefined) {
-                const tempAdd = {
-                    _id: idUser,
-                    user: userAdd.user,
-                    addDate: formatDate(Date.now()),
-                    flag: false //False === Dang cho ket ban, true === ket ban thanh cong
-                };
-                const userFollow = boolFlag.follower.find(el => el._id === idUser);
-                if (userFollow === undefined) {
-                    const tempFollow = {
+            } else {
+                const boolFlag = userLogin.friend.find(el => el._id === idUser);
+                if (boolFlag === undefined) {
+                    const tempAdd = {
                         _id: idUser,
                         user: userAdd.user,
-                        followDate: formatDate(Date.now())
+                        addDate: formatDate(Date.now()),
+                        flag: false //False === Dang cho ket ban, true === ket ban thanh cong
                     };
-                    userLogin.follower.push(tempFollow);
-                }
-                userLogin.friendWait.push(tempAdd);
-                userLogin.save();
-                return res.status(200).json({
-                    status: 200,
-                    success: true,
-                    message: "Sent friend request",
-                });
+                    const tempWait = {
+                        _id: req.user._id,
+                        user: userLogin.user,
+                        addDate: formatDate(Date.now()),
+                    }
+                    const userFollow = userLogin.followed.find(el => el._id === idUser);
+                    if (userFollow === undefined) {
+                        const tempFollowed = {
+                            _id: idUser,
+                            user: userAdd.user,
+                            followDate: formatDate(Date.now())
+                        };
+                        const tempFollower = {
+                            _id: req.user._id,
+                            user: userLogin.user,
+                            followDate: formatDate(Date.now())
+                        };
+                        userLogin.followed.push(tempFollowed);
+                        userAdd.follower.push(tempFollower);
+                    }
+                    userLogin.friend.push(tempAdd);
+                    userAdd.friendWait.push(tempWait);
+                    userLogin.save();
+                    userAdd.save();
+                    return res.status(200).json({
+                        status: 200,
+                        success: true,
+                        message: "Sent friend request",
+                    });
 
-            } else {
-                return res.status(403).json({
-                    status: 403,
-                    success: false,
-                    message: "Two people have made friends",
-                });
+                } else {
+                    return res.status(403).json({
+                        status: 403,
+                        success: false,
+                        message: "Two people have made friends or waiting for confirmation",
+                    });
+                }
             }
+
         } catch (err) {
+            console.log(err);
             return res.status(500).json({
                 status: 500,
                 success: false,
