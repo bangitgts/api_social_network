@@ -220,6 +220,48 @@ class AccountController {
             });
         }
     };
+    async confirmFriend(req, res) {
+        try {
+            const userLogin = await AccountModel.findOne({
+                _id: req.user._id
+            });
+            const userWait = await AccountModel.findOne({
+                _id: req.params._id
+            });
+            const friendWait = userLogin.friendWait.find(el => el._id === req.params._id);
+            if (!friendWait) {
+                const newWait = userLogin.friendWait.filter(el => el._id !== req.params._id);
+                userLogin.friendWait = newWait;
+                const friendLogin = {
+                    _id: userWait._id,
+                    user: userWait.user,
+                    confirmDate: formatDate(Date.now()),
+                };
+                const friendWait = {
+                    _id: userLogin._id,
+                    user: userLogin.user,
+                    confirmDate: formatDate(Date.now()),
+                };
+                userLogin.friend.push(friendLogin);
+                userWait.friend.push(friendWait);
+                userLogin.save();
+                userWait.save();
+                return res.status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "Add friend successfully",
+                });
+            } else {
+                return res.status(403).json({
+                    status: 403,
+                    success: false,
+                    message: "Two people have made friends",
+                });
+            }
+        } catch (err) {
+            next(err);
+        }
+    };
     async followFriend(req, res) {
         try {
             const userLogin = await AccountModel.findOne({

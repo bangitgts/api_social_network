@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require("express");
 const app = express();
+const http = require("http").createServer(app);
 const port = process.env.PORT;
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
@@ -28,6 +29,9 @@ app.get("/", (req, res) => {
         message: "API"
     });
 });
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+// app.listen(port, () => {
+//     console.log(`Example app listening at http://localhost:${port}`);
+// });
+http.listen(4000, function() {
+    console.log("listening on *:4000");
 });
