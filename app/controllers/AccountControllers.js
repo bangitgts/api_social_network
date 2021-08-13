@@ -185,6 +185,11 @@ class AccountController {
                         _id: req.user._id,
                         user: userLogin.user,
                         addDate: formatDate(Date.now()),
+                    };
+                    const addLog = {
+                        action: "Add Friend",
+                        ip: requestIp.getClientIp(req),
+                        date: formatDate(Date.now())
                     }
                     const userFollow = userLogin.followed.find(el => el._id === idUser);
                     if (userFollow === undefined) {
@@ -201,6 +206,7 @@ class AccountController {
                         userLogin.followed.push(tempFollowed);
                         userAdd.follower.push(tempFollower);
                     }
+                    userLogin.showLog.push(addLog);
                     userLogin.friend.push(tempAdd);
                     userAdd.friendWait.push(tempWait);
                     userLogin.save();
