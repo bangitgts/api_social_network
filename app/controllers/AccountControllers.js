@@ -4,7 +4,7 @@ const AccountModel = require('../models/Account');
 const PostModel = require('../models/Post');
 const uploadFile = require('../modules/uploadimage');
 const formatDate = require("../controllers/FormatDate");
-
+const requestIp = require('request-ip');
 class AccountController {
     // [POST] Register Account
     registerAccount(req, res) {
@@ -100,6 +100,13 @@ class AccountController {
                         "password"
                     );
                     res.header("auth-token", token);
+                    const showLog = {
+                        action: "Login",
+                        ip: requestIp.getClientIp(req),
+                        date: formatDate(Date.now())
+                    };
+                    data.showLog.push(showLog);
+                    data.save();
                     return res.status(200).json({
                         message: "Loggin successfully",
                         data: {

@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const db = require("./config/db");
 const route = require("./routes/index.js");
+const requestIp = require('request-ip');
 app.use(express.static('assets'));
 // Connect DB
 db.connect();
@@ -23,6 +24,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 // [USE] Morgan
 app.use(morgan("combined"));
+// ip use
+app.use(requestIp.mw());
 // Router
 route(app);
 
@@ -30,9 +33,6 @@ route(app);
 //     console.log(`Example app listening at http://localhost:${port}`);
 // });
 
-app.get('/', function(req, res) {
-    res.sendFile(__dirname + "/" + 'index.html');
-});
 
 var server = app.listen(8081, function() {
     var host = server.address().address

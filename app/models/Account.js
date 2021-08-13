@@ -59,7 +59,7 @@ const Account = new Schema({
         default: ""
     },
     showLog: {
-        type: String,
+        type: Array,
         default: ''
     },
     createDate: {
