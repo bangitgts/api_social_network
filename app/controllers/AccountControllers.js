@@ -4,6 +4,7 @@ const AccountModel = require('../models/Account');
 const PostModel = require('../models/Post');
 const uploadFile = require('../modules/uploadimage');
 const formatDate = require("../controllers/FormatDate");
+
 class AccountController {
     // [POST] Register Account
     registerAccount(req, res) {
@@ -462,6 +463,7 @@ class AccountController {
                 if (flag === undefined) {
                     data.like.push(req.user._id);
                     data.save();
+
                     return res.status(200).json({
                         status: 200,
                         success: true,

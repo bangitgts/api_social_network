@@ -26,6 +26,10 @@ const Account = new Schema({
         minLength: 6,
         required: [true, "Password required"]
     },
+    notification: {
+        type: Array,
+        default: []
+    },
     friend: {
         type: Array,
         default: []
@@ -53,6 +57,10 @@ const Account = new Schema({
     description: {
         type: String,
         default: ""
+    },
+    showLog: {
+        type: String,
+        default: ''
     },
     createDate: {
         type: Object,

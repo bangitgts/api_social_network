@@ -5,9 +5,9 @@ const formatDate = require("../controllers/FormatDate")
 
 const Post = new Schema({
     userPost: {
-        type: String,
+        type: Object,
         required: true
-    }, // name's user post 
+    }, // name's user post && _id 
     content: {
         type: String,
         minLength: 1,
