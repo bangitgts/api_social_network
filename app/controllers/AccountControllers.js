@@ -242,6 +242,16 @@ class AccountController {
             const userWait = await AccountModel.findOne({
                 _id: req.params._id
             });
+            const confirmLog = {
+                action: `Confirm Friend ${userWait.user}`,
+                ip: requestIp.getClientIp(req),
+                date: formatDate(Date.now())
+            }
+            const confirmedLog = {
+                action: `Confirmed to ${userLogin.user}`,
+                ip: requestIp.getClientIp(req),
+                date: formatDate(Date.now())
+            }
             const friendWait = userLogin.friendWait.find(el => el._id === req.params._id);
             if (!friendWait) {
                 const newWait = userLogin.friendWait.filter(el => el._id !== req.params._id);
@@ -256,7 +266,9 @@ class AccountController {
                     user: userLogin.user,
                     confirmDate: formatDate(Date.now()),
                 };
-                userLogin.friend.push(friendLogin);
+                userLogin.showLog.push(confirmLog);
+                userLogin.friend.push(confirmedLog);
+                userWait.showLog.push(confirmLog);
                 userWait.friend.push(friendWait);
                 userLogin.save();
                 userWait.save();
